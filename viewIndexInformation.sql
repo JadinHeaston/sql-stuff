@@ -17,4 +17,4 @@ FROM sys.dm_db_index_physical_stats (DB_ID(@DatabaseName), NULL, NULL, NULL, NUL
 WHERE (
         i.[Name] like '%IX%'
         OR i.[Name] like '%PK%'
-    );
+    ) ORDER BY avg_fragmentation_in_percent Desc;
