@@ -17,6 +17,7 @@ DECLARE @tempIndexTable TABLE (
         TableName NVARCHAR(MAX),
         AvgFragmentationInPercent FLOAT,
         ObjectTypeDescription NVARCHAR(MAX),
+		index_size_mb FLOAT,
         remediation NVARCHAR(MAX)
     );
 INSERT INTO @tempIndexTable (
@@ -25,6 +26,7 @@ INSERT INTO @tempIndexTable (
         TableName,
         AvgFragmentationInPercent,
         ObjectTypeDescription,
+		index_size_mb,
         remediation
     ) (
         SELECT i.[name],
@@ -101,6 +103,7 @@ INSERT INTO @tempIndexTable (
         TableName,
         AvgFragmentationInPercent,
         ObjectTypeDescription,
+		index_size_mb,
         remediation
     ) (
         SELECT i.[name],
