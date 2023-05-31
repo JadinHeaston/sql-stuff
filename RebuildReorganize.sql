@@ -1,3 +1,4 @@
+USE DatabaseName;
 DECLARE @DatabaseName NVARCHAR(MAX) = '';
 DECLARE @IndexName NVARCHAR(MAX);
 DECLARE @TableName NVARCHAR(MAX);
@@ -80,15 +81,15 @@ SET @CurrentRemediation = (
         FROM @tempIndexTable
         WHERE [RowID] = @counter
     );
-BEGIN TRY PRINT 'Remediation (' + @CurrentRemediation + ') starting [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + '] at ' + convert(varchar, getdate(), 121);
+BEGIN TRY PRINT 'Remediation (' + @CurrentRemediation + ') starting [' + @CurrentIndexName + '] ON [' + @CurrentTableName + '] at ' + convert(varchar, getdate(), 121);
 IF @CurrentRemediation = 'REORGANIZE'
-SET @CmdRemediate = 'ALTER INDEX [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + '] ' + @CmdReorganize;
+SET @CmdRemediate = 'ALTER INDEX [' + @CurrentIndexName + '] ON [' + @CurrentTableName + '] ' + @CmdReorganize;
 IF @CurrentRemediation = 'REBUILD'
-SET @CmdRemediate = 'ALTER INDEX [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + '] ' + @CmdRebuild;
+SET @CmdRemediate = 'ALTER INDEX [' + @CurrentIndexName + '] ON [' + @CurrentTableName + '] ' + @CmdRebuild;
 EXEC (@CmdRemediate);
-PRINT 'Remediation (' + @CurrentRemediation + ') executed [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + '] at ' + convert(varchar, getdate(), 121);
+PRINT 'Remediation (' + @CurrentRemediation + ') executed [' + @CurrentIndexName + '] ON [' + @CurrentTableName + '] at ' + convert(varchar, getdate(), 121);
 END TRY BEGIN CATCH;
-PRINT 'Failed to remediate (' + @CurrentRemediation + ') [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + ']';
+PRINT 'Failed to remediate (' + @CurrentRemediation + ') [' + @CurrentIndexName + '] ON [' + @CurrentTableName + ']';
 PRINT ERROR_MESSAGE();
 END CATCH;
 SET @counter = @counter + 1;

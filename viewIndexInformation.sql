@@ -1,3 +1,4 @@
+USE DatabaseName;
 DECLARE @DatabaseName NVARCHAR(MAX) = '';
 SELECT i.[name],
     s.[index_type_desc],
@@ -19,4 +20,4 @@ WHERE (
         i.[Name] like '%IX%'
         OR i.[Name] like '%PK%'
     )
-ORDER BY [avg_fragmentation_in_percent] Desc;
+ORDER BY s.[avg_fragmentation_in_percent] Desc;
