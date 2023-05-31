@@ -1,5 +1,5 @@
-SELECT column,
+SELECT [column],
     COUNT(*)
 FROM table
-GROUP BY column
+GROUP BY [column]
 HAVING COUNT(*) > 1;

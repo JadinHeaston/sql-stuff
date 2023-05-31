@@ -37,12 +37,12 @@ INSERT INTO @tempIndexTable (
                 AND s.[avg_fragmentation_in_percent] < 30 THEN 'REORGANIZE'
                 WHEN s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
             END as remediation
-        FROM sys.dm_db_index_physical_stats (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
-            INNER JOIN sys.indexes AS i ON s.object_id = i.object_id
-            AND s.index_id = i.index_id
-            INNER JOIN sys.objects AS o ON i.object_id = o.object_id
+        FROM sys.[dm_db_index_physical_stats] (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
+            INNER JOIN sys.[indexes] AS i ON s.[object_id] = i.[object_id]
+            AND s.[index_id] = i.[index_id]
+            INNER JOIN sys.[objects] AS o ON i.[object_id] = o.[object_id]
         WHERE (
-                s.avg_fragmentation_in_percent > 10
+                s.[avg_fragmentation_in_percent] > 10
                 and (
                     i.[Name] like '%IX%'
                     OR i.[Name] like '%PK%'
@@ -52,7 +52,7 @@ INSERT INTO @tempIndexTable (
 PRINT 'Initial Indexes: ';
 SELECT *
 FROM @tempIndexTable
-ORDER BY AvgFragmentationInPercent Desc;
+ORDER BY [AvgFragmentationInPercent] Desc;
 /*
  Performing remediation. Uncomment the RETURN; to run this portion.
  */
@@ -63,19 +63,19 @@ FROM @tempIndexTable;
 DECLARE @counter INTEGER = 1;
 WHILE(@counter <= @totalCount) BEGIN
 SET @CurrentIndexName = (
-        SELECT top 1 IndexName
+        SELECT top 1 [IndexName]
         FROM @tempIndexTable
-        WHERE RowID = @counter
+        WHERE [RowID] = @counter
     );
 SET @CurrentTableName = (
-        SELECT top 1 TableName
+        SELECT top 1 [TableName]
         FROM @tempIndexTable
-        WHERE RowID = @counter
+        WHERE [RowID] = @counter
     );
 SET @CurrentRemediation = (
-        SELECT top 1 remediation
+        SELECT top 1 [remediation]
         FROM @tempIndexTable
-        WHERE RowID = @counter
+        WHERE [RowID] = @counter
     );
 BEGIN TRY PRINT 'Remediation (' + @CurrentRemediation + ') starting [' + @CurrentIndexName + '] ON [dbo].[' + @CurrentTableName + '] at ' + convert(varchar, getdate(), 121);
 IF @CurrentRemediation = 'REORGANIZE'
@@ -112,12 +112,12 @@ INSERT INTO @tempIndexTable (
                 AND s.[avg_fragmentation_in_percent] < 30 THEN 'REORGANIZE'
                 WHEN s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
             END as remediation
-        FROM sys.dm_db_index_physical_stats (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
-            INNER JOIN sys.indexes AS i ON s.object_id = i.object_id
-            AND s.index_id = i.index_id
-            INNER JOIN sys.objects AS o ON i.object_id = o.object_id
+        FROM sys.[dm_db_index_physical_stats] (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
+            INNER JOIN sys.[indexes] AS i ON s.[object_id] = i.[object_id]
+            AND s.[index_id] = i.[index_id]
+            INNER JOIN sys.[objects] AS o ON i.[object_id] = o.[object_id]
         WHERE (
-                s.avg_fragmentation_in_percent > 10
+                s.[avg_fragmentation_in_percent] > 10
                 and (
                     i.[Name] like '%IX%'
                     OR i.[Name] like '%PK%'
@@ -126,4 +126,4 @@ INSERT INTO @tempIndexTable (
     );
 SELECT *
 FROM @tempIndexTable
-ORDER BY AvgFragmentationInPercent Desc;
+ORDER BY [AvgFragmentationInPercent] Desc;
