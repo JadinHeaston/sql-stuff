@@ -58,7 +58,7 @@ SELECT *
 FROM @tempIndexTable
 ORDER BY [AvgFragmentationInPercent] Desc;
 /*
- Performing remediation. Uncomment the RETURN; to run this portion.
+ Performing remediation. Comment the RETURN; to run this portion.
  */
 RETURN;
 DECLARE @totalCount INTEGER;
