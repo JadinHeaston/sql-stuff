@@ -18,7 +18,7 @@ DECLARE @tempIndexTable TABLE (
         TableName NVARCHAR(MAX),
         AvgFragmentationInPercent FLOAT,
         ObjectTypeDescription NVARCHAR(MAX),
-		index_size_mb FLOAT,
+        index_size_mb FLOAT,
         remediation NVARCHAR(MAX)
     );
 INSERT INTO @tempIndexTable (
@@ -27,7 +27,7 @@ INSERT INTO @tempIndexTable (
         TableName,
         AvgFragmentationInPercent,
         ObjectTypeDescription,
-		index_size_mb,
+        index_size_mb,
         remediation
     ) (
         SELECT i.[name],
@@ -104,7 +104,7 @@ INSERT INTO @tempIndexTable (
         TableName,
         AvgFragmentationInPercent,
         ObjectTypeDescription,
-		index_size_mb,
+        index_size_mb,
         remediation
     ) (
         SELECT i.[name],
@@ -114,9 +114,12 @@ INSERT INTO @tempIndexTable (
             o.[type_desc],
             (CAST(s.page_count as float) * CAST(8 as float)) / CAST(1000 as float) as index_size_mb,
             CASE
-                WHEN s.[avg_fragmentation_in_percent] > 10
+                WHEN s.page_count > 32
+                AND s.[avg_fragmentation_in_percent] > 10
                 AND s.[avg_fragmentation_in_percent] < 30 THEN 'REORGANIZE'
-                WHEN s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
+                WHEN s.page_count > 32
+                AND s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
+                ELSE NULL
             END as remediation
         FROM sys.[dm_db_index_physical_stats] (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
             INNER JOIN sys.[indexes] AS i ON s.[object_id] = i.[object_id]

@@ -1,5 +1,5 @@
-USE DatabaseName;
-DECLARE @DatabaseName NVARCHAR(MAX) = '';
+USE SecTrack2;
+DECLARE @DatabaseName NVARCHAR(MAX) = 'SecTrack2';
 SELECT i.[name],
     s.[index_type_desc],
     o.[name],
@@ -7,9 +7,11 @@ SELECT i.[name],
     o.[type_desc],
     (CAST(s.page_count as float) * CAST(8 as float)) / CAST(1000 as float) as index_size_mb,
     CASE
-        WHEN s.[avg_fragmentation_in_percent] > 10
+        WHEN s.page_count > 32
+        AND s.[avg_fragmentation_in_percent] > 10
         AND s.[avg_fragmentation_in_percent] < 30 THEN 'REORGANIZE'
-        WHEN s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
+        WHEN s.page_count > 32
+        AND s.[avg_fragmentation_in_percent] > 30 THEN 'REBUILD'
         ELSE NULL
     END as remediation
 FROM sys.[dm_db_index_physical_stats] (DB_ID(@DatabaseName), NULL, NULL, NULL, NULL) AS s
